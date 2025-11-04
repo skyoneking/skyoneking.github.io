@@ -131,10 +131,10 @@ yarn.lock
 pnpm-lock.yaml
 
 # Data files (specific to stock data generator)
-data/cache/
-data/sse/
-data/szse/
-cache/
+# data/cache/
+# data/sse/
+# data/szse/
+# cache/
 
 # Temporary files
 nul

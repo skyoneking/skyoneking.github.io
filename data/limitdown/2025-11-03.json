@@ -1,0 +1,127 @@
+{
+  "date": "2025-11-03",
+  "generateTime": "2025-11-04 09:42:50",
+  "totalCount": 10,
+  "stocks": [
+    {
+      "code": "600288",
+      "name": "大恒科技",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 15.91,
+      "high": 17.5,
+      "last": 16.97,
+      "dropRate": 3.03,
+      "dropAmount": 0.53,
+      "explodedType": "中度炸板"
+    },
+    {
+      "code": "600302",
+      "name": "标准股份",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 9.51,
+      "high": 10.46,
+      "last": 10.09,
+      "dropRate": 3.54,
+      "dropAmount": 0.37,
+      "explodedType": "中度炸板"
+    },
+    {
+      "code": "600513",
+      "name": "联环药业",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 21.77,
+      "high": 23.95,
+      "last": 23.38,
+      "dropRate": 2.38,
+      "dropAmount": 0.57,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "600586",
+      "name": "金晶科技",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 5.25,
+      "high": 5.78,
+      "last": 5.64,
+      "dropRate": 2.42,
+      "dropAmount": 0.14,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "600654",
+      "name": "中安科",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 3.56,
+      "high": 3.92,
+      "last": 3.81,
+      "dropRate": 2.81,
+      "dropAmount": 0.11,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "603118",
+      "name": "共进股份",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 11.94,
+      "high": 13.13,
+      "last": 12.28,
+      "dropRate": 6.47,
+      "dropAmount": 0.85,
+      "explodedType": "深度炸板"
+    },
+    {
+      "code": "603131",
+      "name": "上海沪工",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 22.49,
+      "high": 24.74,
+      "last": 24.05,
+      "dropRate": 2.79,
+      "dropAmount": 0.69,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "603185",
+      "name": "弘元绿能",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 29.48,
+      "high": 32.43,
+      "last": 32.1,
+      "dropRate": 1.02,
+      "dropAmount": 0.33,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "603656",
+      "name": "泰禾智能",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 23.43,
+      "high": 25.77,
+      "last": 25.45,
+      "dropRate": 1.24,
+      "dropAmount": 0.32,
+      "explodedType": "轻微炸板"
+    },
+    {
+      "code": "603686",
+      "name": "福龙马",
+      "exchange": "SSE",
+      "boardType": "主板",
+      "prevClose": 30.94,
+      "high": 34.03,
+      "last": 30.43,
+      "dropRate": 10.58,
+      "dropAmount": 3.6,
+      "explodedType": "深度炸板"
+    }
+  ]
+}

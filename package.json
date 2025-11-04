@@ -1,0 +1,30 @@
+{
+  "name": "stock-data-generator",
+  "version": "2.0.0",
+  "description": "股票数据生成器 - 提供上交所和深交所数据获取、涨停板分析、炸板股分析等功能的编程接口",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "stock",
+    "sse",
+    "szse",
+    "market-data",
+    "limit-up",
+    "limit-down",
+    "data-analysis",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "fs-extra": "^11.1.1",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir F:tztzsj)",
+      "WebSearch",
+      "WebFetch(domain:www.szse.cn)",
+      "WebFetch(domain:pypi.org)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(dir:*)",
+      "Bash(nul:*)",
+      "WebFetch(domain:pinia.vuejs.org)",
+      "WebFetch(domain:router.vuejs.org)",
+      "WebFetch(domain:element-plus.org)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

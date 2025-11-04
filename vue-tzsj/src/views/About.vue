@@ -102,7 +102,7 @@ import {
   Setting,
   DataAnalysis,
   Monitor,
-  Magic,
+  Tools as MagicStick,
   Check
 } from '@element-plus/icons-vue'
 
@@ -111,7 +111,7 @@ const techStack = ref([
   {
     name: 'Vue 3',
     version: '^3.4.0',
-    versionType: 'success',
+    versionType: 'success' as const,
     description: '渐进式 JavaScript 框架，支持组合式 API',
     icon: Document,
     color: '#4fc08d'
@@ -119,7 +119,7 @@ const techStack = ref([
   {
     name: 'TypeScript',
     version: '^5.5.0',
-    versionType: 'success',
+    versionType: 'success' as const,
     description: 'JavaScript 的超集，提供静态类型检查',
     icon: Setting,
     color: '#3178c6'
@@ -127,7 +127,7 @@ const techStack = ref([
   {
     name: 'Vite',
     version: '^5.2.0',
-    versionType: 'success',
+    versionType: 'success' as const,
     description: '下一代前端构建工具，提供快速的开发体验',
     icon: Tools,
     color: '#646cff'
@@ -135,7 +135,7 @@ const techStack = ref([
   {
     name: 'Element Plus',
     version: '^2.8.0',
-    versionType: 'primary',
+    versionType: 'primary' as const,
     description: 'Vue 3 的桌面端组件库',
     icon: Monitor,
     color: '#409eff'
@@ -143,7 +143,7 @@ const techStack = ref([
   {
     name: 'Pinia',
     version: '^2.2.0',
-    versionType: 'success',
+    versionType: 'success' as const,
     description: 'Vue 的状态管理库',
     icon: DataAnalysis,
     color: '#ffd700'
@@ -151,9 +151,9 @@ const techStack = ref([
   {
     name: 'Vue Router',
     version: '^4.4.0',
-    versionType: 'success',
+    versionType: 'success' as const,
     description: 'Vue.js 官方的路由管理器',
-    icon: Magic,
+    icon: MagicStick,
     color: '#7952b3'
   }
 ])

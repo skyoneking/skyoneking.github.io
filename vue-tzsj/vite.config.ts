@@ -38,21 +38,22 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'dist',
+    outDir: '../',
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {
       output: {
-        chunkFileNames: 'js/[name]-[hash].js',
-        entryFileNames: 'js/[name]-[hash].js',
-        assetFileNames: '[ext]/[name]-[hash].[ext]'
+        chunkFileNames: 'dist/js/[name]-[hash].js',
+        entryFileNames: 'dist/js/[name]-[hash].js',
+        assetFileNames: 'dist/[ext]/[name]-[hash].[ext]'
       }
     }
   },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/styles/variables.scss" as *;`
+        additionalData: `@use "@/styles/variables.scss" as *;`,
+        api: 'modern-compiler'
       }
     }
   }

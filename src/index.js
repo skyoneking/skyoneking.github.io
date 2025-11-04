@@ -3,12 +3,13 @@ const SZSEService = require('./services/szse-service');
 const EastMoneyService = require('./services/eastmoney-service');
 const LimitUpService = require('./services/limitup-service');
 const LimitDownService = require('./services/limitdown-service');
+const IndexService = require('./services/index-service');
 const CacheService = require('./services/cache-service');
 const HolidayService = require('./services/holiday-service');
 const FileUtils = require('./utils/file-utils');
 const DateUtils = require('./utils/date-utils');
 const logger = require('./utils/logger');
-const { EXCHANGES } = require('./config/constants');
+const { EXCHANGES, INDICES } = require('./config/constants');
 const { NonTradingDayError } = require('./utils/errors');
 
 /**
@@ -23,8 +24,12 @@ class StockDataGenerator {
     this.eastMoneyService = new EastMoneyService();
     this.limitUpService = new LimitUpService();
     this.limitDownService = new LimitDownService();
+    this.indexService = new IndexService();
     this.cacheService = new CacheService();
     this.holidayService = new HolidayService();
+
+    // 将 holidayService 注入到 indexService
+    this.indexService.holidayService = this.holidayService;
   }
 
   /**
@@ -388,7 +393,8 @@ class StockDataGenerator {
       const result = {
         stockData: null,
         limitUp: null,
-        limitDown: null
+        limitDown: null,
+        indices: null
       };
 
       const errors = [];
@@ -423,6 +429,16 @@ class StockDataGenerator {
         }
       }
 
+      // 获取指数数据
+      if (options.includeIndices !== false) {
+        const indexResult = await this.generateIndexData(targetDate, options);
+        if (indexResult.success) {
+          result.indices = indexResult.data;
+        } else {
+          errors.push(...indexResult.errors);
+        }
+      }
+
       return {
         success: errors.length === 0,
         data: result,
@@ -443,6 +459,189 @@ class StockDataGenerator {
         metadata: null
       };
     }
+  }
+
+  /**
+   * 获取指数数据
+   * @param {string} date - 日期字符串 (YYYY-MM-DD)
+   * @param {Object} options - 配置选项
+   * @returns {Promise<Object>} 指数数据结果
+   */
+  async generateIndexData(date = null, options = {}) {
+    try {
+      await this.initializeDirectories();
+
+      const targetDate = date || DateUtils.getCurrentDate();
+      const { useCache = true, saveToFile = true } = options;
+
+      logger.info(`开始获取 ${targetDate} 的指数数据`);
+
+      const indexData = await this.indexService.fetchAllIndexData(targetDate, {
+        useCache,
+        saveToFile
+      });
+
+      if (indexData && indexData.indices && indexData.indices.length > 0) {
+        logger.info(`指数数据获取成功: ${indexData.indices.length} 个指数`);
+        return {
+          success: true,
+          data: indexData,
+          errors: [],
+          metadata: {
+            date: targetDate,
+            fetchedAt: DateUtils.getCurrentDateTime(),
+            source: '东方财富',
+            dataPoints: indexData.indices.length,
+            files: saveToFile ? this.getIndexDataFiles(targetDate) : []
+          }
+        };
+      } else {
+        const errorMsg = indexData && indexData.metadata && indexData.metadata.errors.length > 0
+          ? `指数数据获取失败: ${indexData.metadata.errors.join(', ')}`
+          : '指数数据获取失败: 未获取到有效数据';
+
+        logger.warn(errorMsg);
+        return {
+          success: false,
+          data: null,
+          errors: [errorMsg],
+          metadata: {
+            date: targetDate,
+            fetchedAt: DateUtils.getCurrentDateTime(),
+            source: '东方财富'
+          }
+        };
+      }
+
+    } catch (error) {
+      if (error instanceof NonTradingDayError) {
+        logger.info(`${date || DateUtils.getCurrentDate()} 是非交易日，跳过指数数据获取`);
+        return {
+          success: false,
+          data: null,
+          errors: [error.message],
+          metadata: {
+            date: date || DateUtils.getCurrentDate(),
+            fetchedAt: DateUtils.getCurrentDateTime(),
+            tradingDayStatus: {
+              isTradingDay: false,
+              reason: error.reason,
+              suggestion: error.suggestion
+            }
+          }
+        };
+      }
+
+      const errorMsg = `获取指数数据失败: ${error.message}`;
+      await logger.error(errorMsg, error);
+      return {
+        success: false,
+        data: null,
+        errors: [errorMsg],
+        metadata: null
+      };
+    }
+  }
+
+  /**
+   * 获取单个指数数据
+   * @param {string} indexCode - 指数代码 (000001.SH 或 399001.SZ)
+   * @param {string} date - 日期字符串 (YYYY-MM-DD)
+   * @param {Object} options - 配置选项
+   * @returns {Promise<Object>} 单个指数数据结果
+   */
+  async getSingleIndexData(indexCode, date = null, options = {}) {
+    try {
+      if (!Object.values(INDICES).includes(indexCode)) {
+        throw new Error(`不支持的指数代码: ${indexCode}`);
+      }
+
+      const targetDate = date || DateUtils.getCurrentDate();
+      const { useCache = true, saveToFile = true } = options;
+
+      logger.info(`开始获取 ${indexCode} 在 ${targetDate} 的数据`);
+
+      const indexData = await this.indexService.fetchIndexData(indexCode, targetDate);
+
+      if (saveToFile) {
+        // 保存单个指数数据到独立文件
+        await this.saveSingleIndexData(indexCode, indexData, targetDate);
+      }
+
+      logger.info(`${indexCode} 数据获取成功`);
+      return {
+        success: true,
+        data: indexData,
+        errors: [],
+        metadata: {
+          date: targetDate,
+          indexCode: indexCode,
+          fetchedAt: DateUtils.getCurrentDateTime(),
+          source: '东方财富'
+        }
+      };
+
+    } catch (error) {
+      const errorMsg = `获取 ${indexCode} 数据失败: ${error.message}`;
+      await logger.error(errorMsg, error);
+      return {
+        success: false,
+        data: null,
+        errors: [errorMsg],
+        metadata: {
+          date: date || DateUtils.getCurrentDate(),
+          indexCode: indexCode,
+          fetchedAt: DateUtils.getCurrentDateTime()
+        }
+      };
+    }
+  }
+
+  /**
+   * 保存单个指数数据
+   * @param {string} indexCode - 指数代码
+   * @param {Object} indexData - 指数数据
+   * @param {string} date - 日期
+   * @returns {Promise<string>} 保存的文件路径
+   */
+  async saveSingleIndexData(indexCode, indexData, date) {
+    try {
+      const indexDir = `data/indices/${indexCode.replace('.', '_').toLowerCase()}`;
+      await FileUtils.ensureDir(indexDir);
+
+      const fileName = `${indexDir}/${date}.json`;
+      const fileData = {
+        ...indexData,
+        date: date,
+        source: '东方财富',
+        metadata: {
+          fetchedAt: DateUtils.getCurrentDateTime(),
+          tradingDay: true
+        }
+      };
+
+      await FileUtils.writeJsonFile(fileName, fileData);
+      logger.info(`单个指数数据保存成功: ${fileName}`);
+      return fileName;
+
+    } catch (error) {
+      const errorMsg = `保存单个指数数据失败: ${error.message}`;
+      logger.error(errorMsg, error);
+      throw new Error(errorMsg);
+    }
+  }
+
+  /**
+   * 获取指数数据文件路径
+   * @param {string} date - 日期
+   * @returns {string[]} 文件路径数组
+   */
+  getIndexDataFiles(date) {
+    return [
+      `data/indices/${date}.json`,
+      `data/indices/${INDICES.SHANGHAI_COMPOSITE.replace('.', '_').toLowerCase()}/${date}.json`,
+      `data/indices/${INDICES.SHENZHEN_COMPONENT.replace('.', '_').toLowerCase()}/${date}.json`
+    ];
   }
 
   /**

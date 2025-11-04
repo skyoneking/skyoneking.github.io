@@ -16,7 +16,11 @@
       "WebFetch(domain:github.com)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run dev)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vite build:*)"
     ],
     "deny": [],
     "ask": []

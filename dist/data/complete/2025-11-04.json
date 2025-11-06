@@ -1,0 +1,18 @@
+{
+  "date": "2025-11-04",
+  "fetchDate": "2025-11-05T01:59:41.072Z",
+  "data": {
+    "szse": {
+      "fetchDate": "2025-11-05T01:59:41.073Z",
+      "exchange": "SZSE",
+      "date": "2025-11-04",
+      "data": []
+    }
+  },
+  "errors": [],
+  "summary": {
+    "total": 1,
+    "success": 1,
+    "failed": 0
+  }
+}

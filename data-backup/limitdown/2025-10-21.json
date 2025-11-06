@@ -1,0 +1,30 @@
+{
+  "generateDate": "2025-11-06T10:13:16.225Z",
+  "targetDate": "2025-10-21",
+  "totalCount": 1,
+  "mainBoardCount": 1,
+  "growthBoardCount": 0,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，跌幅<=-9.9%为跌停",
+  "stocks": [
+    {
+      "rank": 1,
+      "code": "000592",
+      "name": "平潭发展",
+      "exchange": "SZSE",
+      "boardType": "深交所主板",
+      "prevClose": 943,
+      "last": 849,
+      "limitThreshold": 9.9,
+      "limitRate": 9.968186638388122,
+      "actualChangeRate": -9.968186638388122,
+      "change": -94,
+      "open": 960,
+      "high": 962,
+      "low": 849,
+      "volume": 6733172,
+      "amount": 5901089686.44,
+      "amp_rate": 855,
+      "tradephase": "T111"
+    }
+  ]
+}

@@ -1,206 +1,356 @@
-# 股票行情数据抓取系统
+# Vue 3 项目 tzsj
 
-一个基于Node.js的股票行情数据抓取工具，支持上交所(SSE)和深交所(SZSE)的数据获取与本地缓存。
+一个现代化的 Vue 3 前端项目模板，集成了当前主流的开发工具和最佳实践。
 
-## 功能特性
+## 📋 项目概述
 
-- ✅ 支持上交所(SSE)和深交所(SZSE)数据获取
-- ✅ 上交所使用官方API，深交所使用东方财富API
-- ✅ 自动缓存机制，避免重复API请求
-- ✅ 支持当日数据和历史数据获取
-- ✅ 命令行界面，操作简单
-- ✅ JSON格式存储，易于处理
-- ✅ 完整的错误处理和日志记录
-- ✅ 支持批量获取日期范围数据
+本项目是一个基于 Vue 3 + Vite + TypeScript 的现代化前端项目模板，包含了开发过程中常用的工具和配置，旨在为开发者提供一个高效、类型安全、易于维护的开发环境。
 
-## 安装和设置
+## 🚀 技术栈
 
-1. 确保已安装Node.js (>=14.0.0)
+### 核心框架
+- **Vue 3.4+** - 渐进式 JavaScript 框架，使用组合式 API
+- **TypeScript 5.5+** - JavaScript 的超集，提供静态类型检查
+- **Vite 5.2+** - 下一代前端构建工具，提供快速的开发体验
 
-2. 安装依赖：
+### 状态管理 & 路由
+- **Pinia 2.2+** - Vue 的官方状态管理库
+- **Vue Router 4.4+** - Vue.js 官方的路由管理器
+
+### UI 框架
+- **Element Plus 2.8+** - Vue 3 的桌面端组件库
+- **@element-plus/icons-vue** - Element Plus 图标库
+
+### 开发工具
+- **ESLint** - 代码质量检查工具
+- **Prettier** - 代码格式化工具
+- **unplugin-auto-import** - API 自动导入插件
+- **unplugin-vue-components** - 组件自动导入插件
+
+### 样式处理
+- **Sass** - CSS 预处理器
+
+## 📦 安装和运行
+
+### 环境要求
+
+- Node.js >= 16.0.0
+- npm >= 7.0.0 或 yarn >= 1.22.0 或 pnpm >= 6.0.0
+
+### 安装依赖
+
 ```bash
+# 使用 npm
 npm install
+
+# 使用 yarn
+yarn install
+
+# 使用 pnpm
+pnpm install
 ```
 
-3. 项目结构：
-```
-F:\tz\tzsj\
-├── src\
-│   ├── config\          # 配置文件
-│   ├── services\        # 数据服务
-│   ├── utils\           # 工具函数
-│   └── index.js         # 主程序入口
-├── data\                # 数据缓存目录
-│   ├── sse\            # 上交所数据
-│   └── szse\           # 深交所数据
-├── logs\                # 日志文件
-├── package.json
-└── README.md
-```
+### 开发环境运行
 
-## 使用方法
-
-### 基本命令
-
-1. **获取当日数据**：
 ```bash
-npm start
-# 或
-node src/index.js current
+# 启动开发服务器
+npm run dev
+
+# 使用 yarn
+yarn dev
+
+# 使用 pnpm
+pnpm dev
 ```
 
-2. **获取指定日期数据**：
+开发服务器将在 http://localhost:3000 启动，并支持热模块替换。
+
+### 构建生产版本
+
 ```bash
-node src/index.js date 2024-01-15
+# 构建生产版本
+npm run build
+
+# 使用 yarn
+yarn build
+
+# 使用 pnpm
+pnpm build
 ```
 
-3. **批量获取日期范围数据**：
+构建文件将输出到 `dist` 目录。
+
+### 预览构建结果
+
 ```bash
-node src/index.js range 2024-01-10 2024-01-15
+# 预览生产构建
+npm run preview
+
+# 使用 yarn
+yarn preview
+
+# 使用 pnpm
+pnpm preview
 ```
 
-4. **刷新缓存**：
-```bash
-# 刷新当日缓存
-node src/index.js refresh
+## 📁 项目结构
 
-# 刷新指定日期缓存
-node src/index.js refresh 2024-01-15
+```
+vue-tzsj/
+├── public/                 # 静态资源
+├── src/
+│   ├── assets/            # 项目资源
+│   ├── components/        # 公共组件
+│   │   └── HelloWorld.vue
+│   ├── layouts/          # 布局组件
+│   │   └── DefaultLayout.vue
+│   ├── router/           # 路由配置
+│   │   └── index.ts
+│   ├── stores/           # Pinia 状态管理
+│   │   └── counter.ts
+│   ├── styles/           # 全局样式
+│   │   └── variables.scss
+│   ├── types/            # TypeScript 类型定义
+│   │   └── index.ts
+│   ├── utils/            # 工具函数
+│   │   └── index.ts
+│   ├── views/            # 页面组件
+│   │   ├── About.vue
+│   │   └── Home.vue
+│   ├── App.vue           # 根组件
+│   ├── auto-imports.d.ts # 自动导入类型定义
+│   ├── components.d.ts   # 组件自动导入类型定义
+│   └── main.ts           # 应用入口
+├── .eslintrc.cjs         # ESLint 配置
+├── .gitignore            # Git 忽略文件
+├── .prettierrc           # Prettier 配置
+├── index.html            # HTML 模板
+├── package.json          # 项目配置
+├── README.md             # 项目文档
+├── tsconfig.json         # TypeScript 配置
+├── tsconfig.node.json    # Node.js TypeScript 配置
+└── vite.config.ts        # Vite 配置
 ```
 
-5. **查看缓存状态**：
-```bash
-node src/index.js cache-status
+## 🛠️ 开发指南
+
+### 组件开发
+
+项目支持组件自动导入，创建的组件会自动注册，无需手动导入：
+
+```vue
+<template>
+  <div>
+    <!-- Element Plus 组件无需导入，直接使用 -->
+    <ElButton type="primary">按钮</ElButton>
+
+    <!-- 自定义组件也无需导入 -->
+    <HelloWorld msg="Hello Vue 3!" />
+  </div>
+</template>
+
+<script setup lang="ts">
+// Vue API 无需导入，直接使用
+const count = ref(0)
+const message = computed(() => `Count: ${count.value}`)
+</script>
 ```
 
-6. **清理过期缓存**：
-```bash
-# 清理超过30天的缓存（默认）
-node src/index.js clean-cache
+### 状态管理
 
-# 清理超过7天的缓存
-node src/index.js clean-cache 7
+使用 Pinia 进行状态管理：
+
+```typescript
+// src/stores/counter.ts
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+export const useCounterStore = defineStore('counter', () => {
+  const count = ref(0)
+  const doubleCount = computed(() => count.value * 2)
+
+  function increment() {
+    count.value++
+  }
+
+  return { count, doubleCount, increment }
+})
 ```
 
-### 高级选项
+在组件中使用：
 
-- **指定交易所**：
-```bash
-# 只获取上交所数据
-node src/index.js current -e sse
+```vue
+<script setup lang="ts">
+import { useCounterStore } from '@/stores/counter'
 
-# 只获取深交所数据
-node src/index.js current -e szse
+const counterStore = useCounterStore()
+
+// 直接使用 store
+counterStore.increment()
+console.log(counterStore.count)
+</script>
 ```
 
-- **不使用缓存**：
-```bash
-node src/index.js current --no-cache
+### 路由管理
+
+项目使用 Vue Router 进行路由管理：
+
+```typescript
+// src/router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('@/views/Home.vue')
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+export default router
 ```
 
-- **查看帮助**：
-```bash
-node src/index.js --help
-```
+### 样式开发
 
-## 数据格式
+项目支持 Sass 预处理器，并提供了全局变量：
 
-获取的数据以JSON格式存储，结构如下：
-
-```json
-{
-  "fetchDate": "2024-01-15 10:30:00",
-  "exchange": "SSE",
-  "date": "2024-01-15",
-  "data": [
-    {
-      "code": "600000",
-      "name": "浦发银行",
-      "open": 10.50,
-      "high": 10.80,
-      "low": 10.45,
-      "last": 10.75,
-      "prev_close": 10.48,
-      "chg_rate": 2.58,
-      "volume": 12500000,
-      "amount": 134500000,
-      "tradephase": "交易中",
-      "change": 0.27,
-      "amp_rate": 3.34,
-      "cpxxsubtype": "A股",
-      "cpxxprodusta": "主板"
-    }
-  ]
+```scss
+// 使用全局变量
+.example {
+  color: $primary-color;
+  padding: $spacing-md;
+  border-radius: $border-radius-base;
 }
 ```
 
-## 文件存储
+### 类型定义
 
-- **上交所数据**：`data/sse/YYYY-MM-DD.json`
-- **深交所数据**：`data/szse/YYYY-MM-DD.json`
-- **日志文件**：`logs/error-YYYY-MM-DD.log`
+项目提供了一些常用的类型定义：
 
-## 配置说明
+```typescript
+// src/types/index.ts
+export interface ApiResponse<T = any> {
+  code: number
+  data: T
+  message: string
+}
 
-### API配置
-- 上交所API配置：`src/config/api-endpoints.js` 中的 `SSE_CONFIG`
-- 深交所API配置：`src/config/api-endpoints.js` 中的 `SZSE_CONFIG`
+export interface User {
+  id: number
+  name: string
+  email: string
+}
+```
 
-### 缓存设置
-- 默认缓存有效期：24小时
-- 缓存清理：默认保留30天
-- 可通过代码修改 `CacheService` 中的设置
+## 📝 可用脚本
 
-## 数据字段说明
+- `npm run dev` - 启动开发服务器
+- `npm run build` - 构建生产版本
+- `npm run preview` - 预览构建结果
+- `npm run lint` - 运行 ESLint 检查
+- `npm run lint:fix` - 自动修复 ESLint 错误
+- `npm run format` - 使用 Prettier 格式化代码
 
-| 字段 | 说明 |
-|------|------|
-| code | 股票代码 |
-| name | 股票名称 |
-| open | 开盘价 |
-| high | 最高价 |
-| low | 最低价 |
-| last | 最新价 |
-| prev_close | 昨收价 |
-| chg_rate | 涨跌幅(%) |
-| volume | 成交量 |
-| amount | 成交额 |
-| tradephase | 交易阶段 |
-| change | 涨跌额 |
-| amp_rate | 振幅(%) |
-| cpxxsubtype | 产品类型 |
-| cpxxprodusta | 交易所 |
+## 🔧 配置说明
 
-## 错误处理
+### Vite 配置
 
-- 网络请求失败会自动重试
-- 错误信息会记录到日志文件
-- 缓存读取失败会自动从API获取
-- 所有异常都有详细的错误提示
+项目使用 Vite 作为构建工具，配置文件为 `vite.config.ts`：
 
-## 数据源说明
+- 支持路径别名 `@/` 指向 `src/` 目录
+- 配置了 Element Plus 自动导入
+- 支持 SCSS 预处理器
+- 开发服务器默认端口 3000
 
-### API数据源
-- **上交所(SSE)**: 使用官方API接口，数据准确可靠
-- **深交所(SZSE)**: 使用东方财富API作为数据源，由于深交所官方API限制，采用第三方数据源
+### TypeScript 配置
 
-### 注意事项
+项目使用严格的 TypeScript 配置：
 
-1. 请遵守相关交易所的API使用条款
-2. 合理控制请求频率，避免对服务器造成压力
-3. 定期清理过期缓存，节省存储空间
-4. 交易日和非交易日的数据可能有所不同
-5. 深交所数据来源于东方财富，可能包含科创板股票（代码以688开头）
+- 启用所有严格类型检查
+- 支持路径映射
+- 配置了 Vue 3 的类型支持
 
-## 开发说明
+### ESLint 配置
 
-如需修改或扩展功能：
+项目使用 ESLint 进行代码质量检查：
 
-1. **添加新的数据源**：在 `src/services/` 目录下创建新的服务类
-2. **修改数据格式**：在服务类中的 `normalizeStockData` 方法中修改
-3. **调整缓存策略**：修改 `CacheService` 中的相关方法
-4. **添加新的命令**：在 `src/index.js` 中添加新的命令处理
+- 遵循 Vue 3 官方推荐规则
+- 集成 TypeScript 支持
+- 配置了自动修复功能
 
-## License
+### Prettier 配置
 
-MIT License
+项目使用 Prettier 进行代码格式化：
+
+- 使用单引号
+- 不使用分号
+- 2 空格缩进
+- 行长度限制 100 字符
+
+## 🎨 特色功能
+
+### 🔥 自动导入
+
+- **Vue API**: `ref`, `computed`, `watch` 等无需手动导入
+- **组件**: Element Plus 组件和自定义组件自动导入
+- **类型**: 自动生成类型定义文件
+
+### 🗂️ 路径别名
+
+支持 `@/` 别名指向 `src/` 目录：
+
+```typescript
+import HelloWorld from '@/components/HelloWorld.vue'
+import { formatDate } from '@/utils'
+```
+
+### 🎯 类型安全
+
+完整的 TypeScript 支持，提供：
+- 组件 props 类型检查
+- 事件类型定义
+- 路由参数类型推导
+- Store 类型安全
+
+### 📱 响应式设计
+
+Element Plus 组件库提供了完善的响应式支持，项目模板也包含了基础的响应式样式配置。
+
+## 🤝 贡献指南
+
+1. Fork 本仓库
+2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交你的修改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开一个 Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证。详情请参阅 [LICENSE](LICENSE) 文件。
+
+## 🙏 致谢
+
+感谢以下开源项目：
+
+- [Vue.js](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [Element Plus](https://element-plus.org/)
+- [Pinia](https://pinia.vuejs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+
+## 📞 联系方式
+
+如果你有任何问题或建议，欢迎通过以下方式联系：
+
+- 提交 Issue
+- 发起 Discussion
+- 邮件联系
+
+---
+
+**Happy Coding! 🎉**

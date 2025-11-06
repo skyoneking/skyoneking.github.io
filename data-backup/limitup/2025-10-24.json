@@ -1,0 +1,30 @@
+{
+  "generateDate": "2025-11-06T11:42:54.300Z",
+  "targetDate": "2025-10-24",
+  "totalCount": 1,
+  "mainBoardCount": 0,
+  "growthBoardCount": 0,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，涨幅>=9.9%为涨停",
+  "stocks": [
+    {
+      "rank": 1,
+      "code": "002851",
+      "name": "麦格米特",
+      "exchange": "SZSE",
+      "boardType": "其他",
+      "prevClose": 7651,
+      "last": 8416,
+      "limitThreshold": 9.9,
+      "limitRate": 9.998692981309633,
+      "actualChangeRate": 9.998692981309633,
+      "change": 765,
+      "open": 7666,
+      "high": 8416,
+      "low": 7661,
+      "volume": 440467,
+      "amount": 3604411118.56,
+      "amp_rate": 739,
+      "tradephase": "T111"
+    }
+  ]
+}

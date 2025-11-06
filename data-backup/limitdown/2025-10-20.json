@@ -1,0 +1,50 @@
+{
+  "generateDate": "2025-11-06T09:43:29.193Z",
+  "targetDate": "2025-10-20",
+  "totalCount": 2,
+  "mainBoardCount": 2,
+  "growthBoardCount": 0,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，跌幅<=-9.9%为跌停",
+  "stocks": [
+    {
+      "rank": 2,
+      "code": "000905",
+      "name": "厦门港务",
+      "exchange": "SZSE",
+      "boardType": "深交所主板",
+      "prevClose": 1167,
+      "last": 1050,
+      "limitThreshold": 9.9,
+      "limitRate": 10.025706940874036,
+      "actualChangeRate": -10.025706940874036,
+      "change": -117,
+      "open": 1138,
+      "high": 1139,
+      "low": 1050,
+      "volume": 918401,
+      "amount": 991687137.95,
+      "amp_rate": 154,
+      "tradephase": "T111"
+    },
+    {
+      "rank": 1,
+      "code": "000753",
+      "name": "漳州发展",
+      "exchange": "SZSE",
+      "boardType": "深交所主板",
+      "prevClose": 1012,
+      "last": 911,
+      "limitThreshold": 9.9,
+      "limitRate": 9.980237154150199,
+      "actualChangeRate": -9.980237154150199,
+      "change": -101,
+      "open": 1000,
+      "high": 1000,
+      "low": 911,
+      "volume": 1529509,
+      "amount": 1426714329.87,
+      "amp_rate": 330,
+      "tradephase": "T111"
+    }
+  ]
+}

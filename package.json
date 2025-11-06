@@ -1,30 +1,60 @@
 {
-  "name": "stock-data-generator",
-  "version": "2.0.0",
-  "description": "股票数据生成器 - 提供上交所和深交所数据获取、涨停板分析、炸板股分析等功能的编程接口",
-  "main": "src/index.js",
+  "name": "vue-tzsj",
+  "version": "0.0.0",
+  "description": "tzsj",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vue-tsc && vite build --mode production",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "format": "prettier --write src/",
+    "generate:data": "node scripts/data-generator.cjs",
+    "generate:data:today": "node scripts/data-generator.cjs --today",
+    "generate:data:yesterday": "node scripts/data-generator.cjs --yesterday",
+    "generate:data:date": "node scripts/data-generator.cjs --date",
+    "generate:data:historical": "node scripts/historical-data-generator.cjs",
+    "generate:data:30days": "node scripts/historical-data-generator.cjs --days 30 --coverage full --mode serial --force",
+    "generate:data:full": "node scripts/historical-data-generator.cjs --coverage full --mode serial --force",
+    "generate:data:basic": "node scripts/historical-data-generator.cjs --coverage basic --mode serial",
+    "generate:sse": "node scripts/data-generator.cjs --types sse",
+    "generate:sse:today": "node scripts/data-generator.cjs --today --types sse",
+    "generate:all": "node scripts/data-generator.cjs --force --verbose"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "dayjs": "^1.11.19",
+    "element-plus": "^2.8.0",
+    "moment": "^2.30.1",
+    "pinia": "^2.2.0",
+    "vue": "^3.4.0",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.24",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.27.0",
+    "gh-pages": "^6.3.0",
+    "prettier": "^3.3.0",
+    "sass": "^1.77.0",
+    "typescript": "^5.5.0",
+    "unplugin-auto-import": "^0.18.0",
+    "unplugin-vue-components": "^0.27.0",
+    "vite": "^5.2.0",
+    "vite-plugin-copy": "^0.1.6",
+    "vue-tsc": "^2.0.0"
   },
   "keywords": [
-    "stock",
-    "sse",
-    "szse",
-    "market-data",
-    "limit-up",
-    "limit-down",
-    "data-analysis",
-    "api"
+    "vue3",
+    "vite",
+    "typescript",
+    "element-plus",
+    "pinia",
+    "vue-router"
   ],
   "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "axios": "^1.6.0",
-    "fs-extra": "^11.1.1",
-    "moment": "^2.29.4"
-  },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "license": "MIT"
 }

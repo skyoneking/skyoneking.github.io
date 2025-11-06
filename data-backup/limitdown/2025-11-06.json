@@ -1,0 +1,50 @@
+{
+  "generateDate": "2025-11-06T12:47:52.093Z",
+  "targetDate": "2025-11-06",
+  "totalCount": 2,
+  "mainBoardCount": 1,
+  "growthBoardCount": 1,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，跌幅<=-9.9%为跌停",
+  "stocks": [
+    {
+      "rank": 2,
+      "code": "300300",
+      "name": "海峡创新",
+      "exchange": "SZSE",
+      "boardType": "创业板",
+      "prevClose": 1230,
+      "last": 1030,
+      "limitThreshold": 9.9,
+      "limitRate": 16.260162601626014,
+      "actualChangeRate": -16.260162601626014,
+      "change": -200,
+      "open": 1160,
+      "high": 1184,
+      "low": 1002,
+      "volume": 2159120,
+      "amount": 2327559664.92,
+      "amp_rate": 4842,
+      "tradephase": "T111"
+    },
+    {
+      "rank": 1,
+      "code": "000753",
+      "name": "漳州发展",
+      "exchange": "SZSE",
+      "boardType": "深交所主板",
+      "prevClose": 1012,
+      "last": 911,
+      "limitThreshold": 9.9,
+      "limitRate": 9.980237154150199,
+      "actualChangeRate": -9.980237154150199,
+      "change": -101,
+      "open": 1000,
+      "high": 1000,
+      "low": 911,
+      "volume": 1529509,
+      "amount": 1426714329.87,
+      "amp_rate": 330,
+      "tradephase": "T111"
+    }
+  ]
+}

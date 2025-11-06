@@ -1,0 +1,9 @@
+{
+  "generateDate": "2025-11-06T11:42:57.869Z",
+  "targetDate": "2025-10-24",
+  "totalCount": 0,
+  "mainBoardCount": 0,
+  "growthBoardCount": 0,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，跌幅<=-9.9%为跌停",
+  "stocks": []
+}

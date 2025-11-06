@@ -20,7 +20,21 @@
       "Bash(npm run dev)",
       "Bash(find:*)",
       "Bash(npm run build:*)",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(timeout:*)",
+      "Bash(data-backup/sse/2025-11-05.json)",
+      "Bash(cat:*)",
+      "Bash(npm run generate:data:*)",
+      "Bash(npm run generate:sse:today:*)",
+      "Bash(npm run generate:data:date:*)",
+      "Bash(npm run generate:sse:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run generate:data:today:*)",
+      "Bash(curl:*)",
+      "Bash(\"F:\\tz\\tzsj\\public\\data\\indices\\2025-11-05.json\")",
+      "Bash(npm run generate:*)",
+      "WebFetch(domain:vitejs.dev)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

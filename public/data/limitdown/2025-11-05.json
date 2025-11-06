@@ -1,0 +1,50 @@
+{
+  "generateDate": "2025-11-05T05:50:55.170Z",
+  "targetDate": "2025-11-05",
+  "totalCount": 2,
+  "mainBoardCount": 2,
+  "growthBoardCount": 0,
+  "calculationMethod": "基于前日收盘价计算涨跌幅，跌幅<=-9.9%为跌停",
+  "stocks": [
+    {
+      "rank": 2,
+      "code": "603595",
+      "name": "ST东尼",
+      "exchange": "SSE",
+      "boardType": "上交所主板",
+      "prevClose": 19.56,
+      "last": 18.58,
+      "limitThreshold": 4.9,
+      "limitRate": 5.010224948875258,
+      "actualChangeRate": -5.010224948875258,
+      "change": -0.9800000000000004,
+      "open": 18.58,
+      "high": 18.58,
+      "low": 18.58,
+      "volume": 60100,
+      "amount": 1116658,
+      "amp_rate": 0,
+      "tradephase": "T111    "
+    },
+    {
+      "rank": 1,
+      "code": "600169",
+      "name": "ST太重",
+      "exchange": "SSE",
+      "boardType": "上交所主板",
+      "prevClose": 2.64,
+      "last": 2.51,
+      "limitThreshold": 4.9,
+      "limitRate": 4.924242424242436,
+      "actualChangeRate": -4.924242424242436,
+      "change": -0.13000000000000034,
+      "open": 2.51,
+      "high": 2.51,
+      "low": 2.51,
+      "volume": 11378100,
+      "amount": 28559031,
+      "amp_rate": 0,
+      "tradephase": "T111    "
+    }
+  ]
+}

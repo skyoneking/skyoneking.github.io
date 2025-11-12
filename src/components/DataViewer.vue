@@ -87,13 +87,13 @@
           <template #label>
             <span class="tab-label">
               上证股票
-              <el-badge :value="dataStore.sseData?.data?.length || 0" type="primary" />
+              <el-badge :value="dataStore.sseData?.length || 0" type="primary" />
             </span>
           </template>
           <div class="tab-content">
             <stock-data-table
-              v-if="dataStore.sseData?.data"
-              :data="dataStore.sseData.data"
+              v-if="dataStore.sseData"
+              :data="dataStore.sseData"
               :loading="dataStore.loading.sse"
               title="上证股票"
             />
@@ -106,13 +106,13 @@
           <template #label>
             <span class="tab-label">
               深证股票
-              <el-badge :value="dataStore.szseData?.data?.length || 0" type="success" />
+              <el-badge :value="dataStore.szseData?.length || 0" type="success" />
             </span>
           </template>
           <div class="tab-content">
             <stock-data-table
-              v-if="dataStore.szseData?.data"
-              :data="dataStore.szseData.data"
+              v-if="dataStore.szseData"
+              :data="dataStore.szseData"
               :loading="dataStore.loading.szse"
               title="深证股票"
             />
@@ -125,13 +125,13 @@
           <template #label>
             <span class="tab-label">
               涨停股票
-              <el-badge :value="dataStore.limitUpData?.stocks?.length || 0" type="danger" />
+              <el-badge :value="dataStore.limitUpData?.length || 0" type="danger" />
             </span>
           </template>
           <div class="tab-content">
             <limit-stock-table
-              v-if="dataStore.limitUpData?.stocks"
-              :data="dataStore.limitUpData.stocks"
+              v-if="dataStore.limitUpData"
+              :data="dataStore.limitUpData"
               :loading="dataStore.loading.limitup"
               title="涨停股票"
             />
@@ -144,13 +144,13 @@
           <template #label>
             <span class="tab-label">
               跌停股票
-              <el-badge :value="dataStore.limitDownData?.stocks?.length || 0" type="warning" />
+              <el-badge :value="dataStore.limitDownData?.length || 0" type="warning" />
             </span>
           </template>
           <div class="tab-content">
             <limit-stock-table
-              v-if="dataStore.limitDownData?.stocks"
-              :data="dataStore.limitDownData.stocks"
+              v-if="dataStore.limitDownData"
+              :data="dataStore.limitDownData"
               :loading="dataStore.loading.limitdown"
               title="跌停股票"
             />
@@ -163,13 +163,13 @@
           <template #label>
             <span class="tab-label">
               指数数据
-              <el-badge :value="dataStore.indicesData?.indices?.length || 0" type="info" />
+              <el-badge :value="dataStore.indicesData?.length || 0" type="info" />
             </span>
           </template>
           <div class="tab-content">
             <index-data-table
-              v-if="dataStore.indicesData?.indices"
-              :data="dataStore.indicesData.indices"
+              v-if="dataStore.indicesData"
+              :data="dataStore.indicesData"
               :loading="dataStore.loading.indices"
               title="指数数据"
             />

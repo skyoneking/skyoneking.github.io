@@ -34,7 +34,17 @@
       "Bash(\"F:\\tz\\tzsj\\public\\data\\indices\\2025-11-05.json\")",
       "Bash(npm run generate:*)",
       "WebFetch(domain:vitejs.dev)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(xargs:*)",
+      "Bash(python:*)",
+      "Bash(for date in 2025-11-07 2025-11-10 2025-11-11 2025-11-12:*)",
+      "Bash(do echo:*)",
+      "Bash(for:*)",
+      "Bash(do if [ -f \"dist/data/$type/$date.json\" ])",
+      "Bash(then echo \"  ✓ $type\")",
+      "Bash(else echo \"  ✗ $type (缺失)\")",
+      "Bash(fi:*)",
+      "Bash(done:*)"
     ],
     "deny": [],
     "ask": []

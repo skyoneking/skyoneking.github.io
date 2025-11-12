@@ -1,13 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { dataService, DataType } from '@/services/dataService'
-import { StockDataGenerator } from '@/services/backend/StockDataGenerator'
-import type {
-  ExchangeDataResponse,
-  LimitDataResponse,
-  IndexDataResponse,
-  StockData
-} from '@/services/dataService'
+import { stockDataModule, DataType } from '@/modules/stock-data'
+import type { StockData, IndexData, MarketStats } from '@/modules/stock-data/types'
 
 /**
  * 数据加载状态
@@ -18,6 +12,7 @@ interface LoadingState {
   limitup: boolean
   limitdown: boolean
   indices: boolean
+  marketStats: boolean
 }
 
 /**
@@ -40,12 +35,10 @@ export const useDataStore = defineStore('data', () => {
     szse: false,
     limitup: false,
     limitdown: false,
-    indices: false
+    indices: false,
+    marketStats: false
   })
   const error = ref<string | null>(null)
-
-  // 数据生成器实例
-  const dataGenerator = new StockDataGenerator()
 
   // 数据生成状态
   const generationLoading = ref<boolean>(false)
@@ -56,17 +49,19 @@ export const useDataStore = defineStore('data', () => {
 
   // 缓存数据
   const cache = ref<{
-    sse: CachedData<ExchangeDataResponse> | null
-    szse: CachedData<ExchangeDataResponse> | null
-    limitup: CachedData<LimitDataResponse> | null
-    limitdown: CachedData<LimitDataResponse> | null
-    indices: CachedData<IndexDataResponse> | null
+    sse: CachedData<StockData[]> | null
+    szse: CachedData<StockData[]> | null
+    limitup: CachedData<StockData[]> | null
+    limitdown: CachedData<StockData[]> | null
+    indices: CachedData<IndexData[]> | null
+    marketStats: CachedData<MarketStats> | null
   }>({
     sse: null,
     szse: null,
     limitup: null,
     limitdown: null,
-    indices: null
+    indices: null,
+    marketStats: null
   })
 
   // 缓存过期时间（30分钟）
@@ -81,22 +76,23 @@ export const useDataStore = defineStore('data', () => {
     Object.values(cache.value).some(cached => cached !== null)
   )
 
-  const sseData = computed(() => cache.value.sse?.data || null)
-  const szseData = computed(() => cache.value.szse?.data || null)
-  const limitUpData = computed(() => cache.value.limitup?.data || null)
-  const limitDownData = computed(() => cache.value.limitdown?.data || null)
-  const indicesData = computed(() => cache.value.indices?.data || null)
+  const sseData = computed(() => cache.value.sse?.data || [])
+  const szseData = computed(() => cache.value.szse?.data || [])
+  const limitUpData = computed(() => cache.value.limitup?.data || [])
+  const limitDownData = computed(() => cache.value.limitdown?.data || [])
+  const indicesData = computed(() => cache.value.indices?.data || [])
+  const marketStatsData = computed(() => cache.value.marketStats?.data || null)
 
   // 获取所有股票数据
   const allStockData = computed(() => {
     const stocks: StockData[] = []
 
-    if (sseData.value?.data) {
-      stocks.push(...sseData.value.data)
+    if (sseData.value) {
+      stocks.push(...sseData.value)
     }
 
-    if (szseData.value?.data) {
-      stocks.push(...szseData.value.data)
+    if (szseData.value) {
+      stocks.push(...szseData.value)
     }
 
     return stocks
@@ -104,11 +100,11 @@ export const useDataStore = defineStore('data', () => {
 
   // 获取统计信息
   const statistics = computed(() => {
-    const sseCount = sseData.value?.data?.length || 0
-    const szseCount = szseData.value?.data?.length || 0
-    const limitUpCount = limitUpData.value?.stocks?.length || 0
-    const limitDownCount = limitDownData.value?.stocks?.length || 0
-    const indicesCount = indicesData.value?.indices?.length || 0
+    const sseCount = sseData.value?.length || 0
+    const szseCount = szseData.value?.length || 0
+    const limitUpCount = limitUpData.value?.length || 0
+    const limitDownCount = limitDownData.value?.length || 0
+    const indicesCount = indicesData.value?.length || 0
 
     return {
       totalStocks: sseCount + szseCount,
@@ -117,7 +113,8 @@ export const useDataStore = defineStore('data', () => {
       limitUpStocks: limitUpCount,
       limitDownStocks: limitDownCount,
       indicesCount,
-      hasAnyData: hasData.value
+      hasAnyData: hasData.value,
+      marketStats: marketStatsData.value
     }
   })
 
@@ -132,9 +129,9 @@ export const useDataStore = defineStore('data', () => {
   /**
    * 更新缓存
    */
-  const updateCache = <T extends Record<string, any>>(type: DataType, data: T, date: string) => {
-    cache.value[type] = {
-      data: data as any,
+  const updateCache = <T>(type: string, data: T, date: string) => {
+    (cache.value as any)[type] = {
+      data,
       timestamp: Date.now(),
       date
     }
@@ -147,7 +144,7 @@ export const useDataStore = defineStore('data', () => {
     const targetDate = date || currentDate.value
 
     // 检查缓存
-    if (!isCacheExpired(cache.value[type]) && cache.value[type]?.date === targetDate) {
+    if (!isCacheExpired((cache.value as any)[type]) && (cache.value as any)[type]?.date === targetDate) {
       console.log(`[${type.toUpperCase()}] 使用缓存数据: ${targetDate}`)
       return true
     }
@@ -158,14 +155,33 @@ export const useDataStore = defineStore('data', () => {
 
       console.log(`[${type.toUpperCase()}] 开始获取数据: ${targetDate}`)
 
-      const response = await dataService.getDataByType(type, targetDate)
+      let data: any
+      switch (type) {
+        case DataType.SSE:
+          data = await stockDataModule.getStockData({ exchange: 'SSE', date: targetDate })
+          break
+        case DataType.SZSE:
+          data = await stockDataModule.getStockData({ exchange: 'SZSE', date: targetDate })
+          break
+        case DataType.LIMIT_UP:
+          data = await stockDataModule.getLimitUpData({ date: targetDate })
+          break
+        case DataType.LIMIT_DOWN:
+          data = await stockDataModule.getLimitDownData({ date: targetDate })
+          break
+        case DataType.INDICES:
+          data = await stockDataModule.getIndexData({ date: targetDate })
+          break
+        default:
+          throw new Error(`不支持的数据类型: ${type}`)
+      }
 
-      if (response.success && response.data) {
-        updateCache(type, response.data, targetDate)
+      if (data) {
+        updateCache(type, data, targetDate)
         console.log(`[${type.toUpperCase()}] 数据获取成功`)
         return true
       } else {
-        throw new Error(response.message || '获取数据失败')
+        throw new Error('获取数据失败')
       }
     } catch (err: any) {
       console.error(`[${type.toUpperCase()}] 获取数据失败:`, err)
@@ -173,6 +189,43 @@ export const useDataStore = defineStore('data', () => {
       return false
     } finally {
       loading.value[type] = false
+    }
+  }
+
+  /**
+   * 获取市场统计信息
+   */
+  const fetchMarketStats = async (date?: string): Promise<boolean> => {
+    const targetDate = date || currentDate.value
+    const cacheKey = 'marketStats'
+
+    // 检查缓存
+    if (!isCacheExpired(cache.value[cacheKey]) && cache.value[cacheKey]?.date === targetDate) {
+      console.log(`[MARKET_STATS] 使用缓存数据: ${targetDate}`)
+      return true
+    }
+
+    try {
+      loading.value[cacheKey] = true
+      error.value = null
+
+      console.log(`[MARKET_STATS] 开始获取数据: ${targetDate}`)
+
+      const data = await stockDataModule.getMarketStats({ date: targetDate })
+
+      if (data) {
+        updateCache(cacheKey, data, targetDate)
+        console.log(`[MARKET_STATS] 数据获取成功`)
+        return true
+      } else {
+        throw new Error('获取市场统计失败')
+      }
+    } catch (err: any) {
+      console.error(`[MARKET_STATS] 获取数据失败:`, err)
+      error.value = err.message || '获取市场统计失败'
+      return false
+    } finally {
+      loading.value[cacheKey] = false
     }
   }
 
@@ -186,7 +239,8 @@ export const useDataStore = defineStore('data', () => {
       fetchData(DataType.SZSE, targetDate),
       fetchData(DataType.LIMIT_UP, targetDate),
       fetchData(DataType.LIMIT_DOWN, targetDate),
-      fetchData(DataType.INDICES, targetDate)
+      fetchData(DataType.INDICES, targetDate),
+      fetchMarketStats(targetDate)
     ]
 
     await Promise.allSettled(promises)
@@ -210,7 +264,7 @@ export const useDataStore = defineStore('data', () => {
     currentDate.value = date
     // 清除缓存，强制重新获取数据
     Object.keys(cache.value).forEach(key => {
-      cache.value[key as keyof typeof cache.value] = null
+      (cache.value as any)[key] = null
     })
   }
 
@@ -244,17 +298,17 @@ export const useDataStore = defineStore('data', () => {
   /**
    * 清除缓存
    */
-  const clearCache = (type?: DataType): void => {
+  const clearCache = (type?: string): void => {
     if (type) {
-      cache.value[type] = null
+      (cache.value as any)[type] = null
     } else {
       Object.keys(cache.value).forEach(key => {
-        cache.value[key as keyof typeof cache.value] = null
+        (cache.value as any)[key] = null
       })
     }
   }
 
-  // 数据生成相关方法
+  // 数据生成相关方法（保留原有接口，但内部使用新模块）
 
   /**
    * 生成完整数据
@@ -267,29 +321,20 @@ export const useDataStore = defineStore('data', () => {
       generationProgress.value = 0
       generationMessage.value = '开始生成数据...'
 
-      const data = await dataGenerator.fetchDateData(targetDate)
+      // 使用新模块获取所有数据
+      await fetchAllData(targetDate)
 
       generationProgress.value = 100
       generationMessage.value = '数据生成完成'
 
-      // 更新缓存
-      if (data.sse) {
-        updateCache(DataType.SSE, data.sse, targetDate)
+      return {
+        sse: sseData.value,
+        szse: szseData.value,
+        limitUp: limitUpData.value,
+        limitDown: limitDownData.value,
+        indices: indicesData.value,
+        marketStats: marketStatsData.value
       }
-      if (data.szse) {
-        updateCache(DataType.SZSE, data.szse, targetDate)
-      }
-      if (data.limitUp) {
-        updateCache(DataType.LIMIT_UP, data.limitUp, targetDate)
-      }
-      if (data.limitDown) {
-        updateCache(DataType.LIMIT_DOWN, data.limitDown, targetDate)
-      }
-      if (data.indices) {
-        updateCache(DataType.INDICES, data.indices, targetDate)
-      }
-
-      return data
     } catch (error: any) {
       console.error('生成完整数据失败:', error)
       generationMessage.value = `生成失败: ${error.message}`
@@ -313,9 +358,36 @@ export const useDataStore = defineStore('data', () => {
       generationLoading.value = true
       generationMessage.value = '正在生成分析报告...'
 
-      const analysis = await dataGenerator.generateCompleteAnalysis(targetDate)
-      analysisResult.value = analysis
+      // 基于当前数据生成简单分析
+      const stocks = allStockData.value
+      const limitUp = limitUpData.value
+      const limitDown = limitDownData.value
+      const indices = indicesData.value
 
+      const analysis = {
+        date: targetDate,
+        summary: {
+          totalStocks: stocks.length,
+          limitUpStocks: limitUp.length,
+          limitDownStocks: limitDown.length,
+          indicesCount: indices.length
+        },
+        topGainers: stocks
+          .filter(s => s.changePercent > 0)
+          .sort((a, b) => b.changePercent - a.changePercent)
+          .slice(0, 10),
+        topLosers: stocks
+          .filter(s => s.changePercent < 0)
+          .sort((a, b) => a.changePercent - b.changePercent)
+          .slice(0, 10),
+        mostActive: stocks
+          .sort((a, b) => b.volume - a.volume)
+          .slice(0, 10),
+        indices: indices,
+        generatedAt: new Date().toISOString()
+      }
+
+      analysisResult.value = analysis
       generationMessage.value = '分析报告生成完成'
       return analysis
     } catch (error: any) {
@@ -340,33 +412,10 @@ export const useDataStore = defineStore('data', () => {
       generationLoading.value = true
       generationMessage.value = `正在刷新 ${type} 数据...`
 
-      let data
-      switch (type) {
-        case DataType.SSE:
-          data = await dataGenerator.fetchSSEData(targetDate)
-          break
-        case DataType.SZSE:
-          data = await dataGenerator.fetchSZSEData(targetDate)
-          break
-        case DataType.LIMIT_UP:
-          data = await dataGenerator.fetchLimitUpData(targetDate)
-          break
-        case DataType.LIMIT_DOWN:
-          data = await dataGenerator.fetchLimitDownData(targetDate)
-          break
-        case DataType.INDICES:
-          data = await dataGenerator.fetchIndexData(targetDate)
-          break
-        default:
-          throw new Error(`不支持的数据类型: ${type}`)
-      }
-
-      if (data) {
-        updateCache(type, data, targetDate)
-      }
+      await fetchData(type, targetDate)
 
       generationMessage.value = `${type} 数据刷新完成`
-      return data
+      return (cache.value as any)[type]?.data
     } catch (error: any) {
       console.error(`刷新 ${type} 数据失败:`, error)
       generationMessage.value = `刷新失败: ${error.message}`
@@ -384,7 +433,8 @@ export const useDataStore = defineStore('data', () => {
    */
   const getCacheStatusInfo = async () => {
     try {
-      const status = await dataGenerator.getCacheStatus()
+      // 使用新模块获取缓存状态
+      const status = stockDataModule.getStatus()
       cacheStatus.value = status
       return status
     } catch (error: any) {
@@ -399,7 +449,8 @@ export const useDataStore = defineStore('data', () => {
    */
   const cleanupExpiredCache = async (maxAge?: number) => {
     try {
-      await dataGenerator.cleanupExpiredCache(maxAge)
+      // 使用新模块清理缓存
+      await stockDataModule.clearCache()
       await getCacheStatusInfo() // 更新缓存状态
     } catch (error: any) {
       console.error('清理缓存失败:', error)
@@ -441,11 +492,13 @@ export const useDataStore = defineStore('data', () => {
     limitUpData,
     limitDownData,
     indicesData,
+    marketStatsData,
     allStockData,
     statistics,
 
     // 方法
     fetchData,
+    fetchMarketStats,
     fetchAllData,
     refreshData,
     setCurrentDate,

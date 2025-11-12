@@ -1,5 +1,5 @@
 {
-  "fetchDate": "2025-11-06T06:31:02.105Z",
+  "fetchDate": "2025-11-06T13:48:20.145Z",
   "indices": [
     {
       "code": "000001",
@@ -125,7 +125,7 @@
   "source": "simulated",
   "metadata": {
     "tradingDay": true,
-    "fetchTime": "2025-11-06T06:31:02.105Z",
+    "fetchTime": "2025-11-06T13:48:20.145Z",
     "dataPoints": 6,
     "totalRequested": 6,
     "errors": []

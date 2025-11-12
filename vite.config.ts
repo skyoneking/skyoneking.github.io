@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -103,7 +103,11 @@ function copyDataFiles() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // 加载环境变量
+  const env = loadEnv(mode, process.cwd())
+
+  return {
   plugins: [
     vue(),
     AutoImport({
@@ -218,7 +222,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['element-plus', '@element-plus/icons-vue']
   },
-  base: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
+  base: env.VITE_BASE_URL || '/',
   build: {
     target: 'es2020',
     outDir: 'dist',
@@ -239,5 +243,6 @@ export default defineConfig({
         api: 'modern-compiler'
       }
     }
+  }
   }
 })

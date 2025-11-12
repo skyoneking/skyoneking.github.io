@@ -204,7 +204,7 @@
       <div v-if="selectedStock" class="stock-detail">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="排名">
-            <el-tag :type="getRankTagType(selectedStock.rank)" effect="dark">
+            <el-tag :type="getRankTagType(selectedStock.rank || 0)" effect="dark">
               {{ selectedStock.rank }}
             </el-tag>
           </el-descriptions-item>
@@ -246,7 +246,7 @@
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="涨停阈值">
-            {{ (selectedStock.limitRate * 100).toFixed(1) }}%
+            {{ ((selectedStock.limitRate || 0) * 100).toFixed(1) }}%
           </el-descriptions-item>
           <el-descriptions-item label="振幅">
             {{ selectedStock.amp_rate?.toFixed(2) }}%

@@ -1,10 +1,12 @@
-import { apiService } from './api'
-import { FileUtils } from '@/utils/backend/file-utils'
-import type { ApiResponse } from '@/types'
-
 /**
- * 数据类型枚举
+ * 数据服务 - 向后兼容代理
+ * 使用新的股票数据模块实现所有功能
  */
+
+import { stockDataModule } from '@/modules/stock-data'
+import type { StockData, IndexData, MarketStats, ApiResponse } from '@/modules/stock-data/types'
+
+// 重新导出枚举以保持向后兼容
 export enum DataType {
   SSE = 'sse',
   SZSE = 'szse',
@@ -14,305 +16,216 @@ export enum DataType {
 }
 
 /**
- * 交易所股票数据接口
- */
-export interface StockData {
-  code: string
-  name: string
-  open: number
-  high: number
-  low: number
-  last: number
-  prev_close: number
-  change: number
-  chg_rate: number
-  volume: number
-  amount: number
-  tradephase: string
-  amp_rate: number
-  cpxxsubtype: string
-  cpxxprodusta: string
-}
-
-/**
  * 交易所数据响应接口
  */
 export interface ExchangeDataResponse {
-  fetchDate: string
-  exchange: string
   date: string
   data: StockData[]
-}
-
-/**
- * 涨跌停股票数据接口
- */
-export interface LimitStockData {
-  rank: number
-  code: string
-  name: string
-  exchange: string
-  boardType: string
-  prevClose: number
-  last: number
-  limitThreshold: number
-  limitRate: number
-  actualChangeRate: number
-  change: number
-  open: number
-  high: number
-  low: number
-  volume: number
-  amount: number
-  amp_rate: number
-  tradephase: string
+  total: number
+  success: boolean
+  message?: string
 }
 
 /**
  * 涨跌停数据响应接口
  */
 export interface LimitDataResponse {
-  generateDate: string
-  targetDate: string
-  totalCount: number
-  mainBoardCount: number
-  growthBoardCount: number
-  calculationMethod: string
-  stocks: LimitStockData[]
-}
-
-/**
- * 指数数据接口
- */
-export interface IndexData {
-  code: string
-  name: string
-  market: string
-  open: number
-  high: number
-  low: number
-  last: number
-  prev_close: number
-  change: number
-  chg_rate: number
-  volume: number
-  amount: number
-  amp_rate: number
-  turnover: number
-  pe: number
-  pb: number
-  market_cap: number
-  update_time: string
+  date: string
+  stocks: StockData[]
+  total: number
+  success: boolean
+  message?: string
 }
 
 /**
  * 指数数据响应接口
  */
 export interface IndexDataResponse {
-  fetchDate: string
+  date: string
   indices: IndexData[]
-  source: string
-  metadata: {
-    tradingDay: boolean
-    fetchTime: string
-    dataPoints: number
-    totalRequested: number
-    errors: string[]
-  }
+  total: number
+  success: boolean
+  message?: string
 }
 
 /**
- * 数据服务类
- * 专门处理本地 JSON 数据的获取
+ * 数据服务类 - 使用新模块实现
  */
-export class DataService {
+class DataService {
   /**
-   * 获取交易所数据
-   * @param exchange 交易所 (sse/szse)
-   * @param date 日期 (YYYY-MM-DD)
-   * @returns Promise<ApiResponse<ExchangeDataResponse>>
+   * 根据类型获取数据
    */
-  async getExchangeData(exchange: string, date: string): Promise<ApiResponse<ExchangeDataResponse>> {
+  async getDataByType(type: DataType, date?: string): Promise<ApiResponse<any>> {
     try {
-      // 首先尝试从多源加载数据
-      const data = await FileUtils.loadFromMultipleSources(exchange, date)
-      return {
-        success: true,
-        data,
-        message: '数据加载成功',
-        status: 200
-      }
-    } catch (error) {
-      // 如果多源加载失败，回退到API服务
-      try {
-        const url = `/data/${exchange}/${date}.json`
-        const response = await apiService.get<ExchangeDataResponse>(url)
+      let data: any
+      const targetDate = date || new Date().toISOString().split('T')[0]
 
-        // 检查是否使用了回退数据
-        if (response.success && response.data) {
-          const isFallback = response.headers?.['x-fallback-data'] === 'true'
-          const fallbackDate = response.headers?.['x-fallback-date']
-
-          if (isFallback && fallbackDate) {
-            return {
-              ...response,
-              message: `已加载最新可用数据 (${fallbackDate})，请求日期 (${date}) 的数据暂未生成`,
-              fallbackUsed: true,
-              fallbackDate
-            }
+      switch (type) {
+        case DataType.SSE:
+          data = await stockDataModule.getStockData({ exchange: 'SSE', date: targetDate })
+          return {
+            success: true,
+            data: {
+              date: targetDate,
+              data,
+              total: data?.length || 0,
+              success: true
+            } as ExchangeDataResponse,
+            timestamp: Date.now()
           }
-        }
 
-        return response
-      } catch (apiError: any) {
-        // 根据错误类型提供更具体的错误信息
-        let errorMessage = `无法加载${exchange}数据`
-        let errorStatus = 404
+        case DataType.SZSE:
+          data = await stockDataModule.getStockData({ exchange: 'SZSE', date: targetDate })
+          return {
+            success: true,
+            data: {
+              date: targetDate,
+              data,
+              total: data?.length || 0,
+              success: true
+            } as ExchangeDataResponse,
+            timestamp: Date.now()
+          }
 
-        if (apiError.status === 500) {
-          errorMessage = `服务器内部错误，请稍后重试或联系管理员`
-          errorStatus = 500
-        } else if (apiError.message?.includes('文件未找到')) {
-          errorMessage = `${exchange.toUpperCase()}数据文件不存在 (${date})`
-          errorStatus = 404
-        } else if (apiError.message?.includes('网络')) {
-          errorMessage = `网络连接失败，请检查网络设置`
-          errorStatus = 0
-        }
+        case DataType.LIMIT_UP:
+          data = await stockDataModule.getLimitUpData({ date: targetDate })
+          return {
+            success: true,
+            data: {
+              date: targetDate,
+              stocks: data,
+              total: data?.length || 0,
+              success: true
+            } as LimitDataResponse,
+            timestamp: Date.now()
+          }
 
-        return {
-          success: false,
-          data: null as any,
-          message: errorMessage,
-          status: errorStatus,
-          originalError: apiError.message
-        }
+        case DataType.LIMIT_DOWN:
+          data = await stockDataModule.getLimitDownData({ date: targetDate })
+          return {
+            success: true,
+            data: {
+              date: targetDate,
+              stocks: data,
+              total: data?.length || 0,
+              success: true
+            } as LimitDataResponse,
+            timestamp: Date.now()
+          }
+
+        case DataType.INDICES:
+          data = await stockDataModule.getIndexData({ date: targetDate })
+          return {
+            success: true,
+            data: {
+              date: targetDate,
+              indices: data,
+              total: data?.length || 0,
+              success: true
+            } as IndexDataResponse,
+            timestamp: Date.now()
+          }
+
+        default:
+          throw new Error(`不支持的数据类型: ${type}`)
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: null,
+        message: error.message || '获取数据失败',
+        timestamp: Date.now()
       }
     }
   }
 
   /**
-   * 获取涨跌停数据
-   * @param type 类型 (limitup/limitdown)
-   * @param date 日期 (YYYY-MM-DD)
-   * @returns Promise<ApiResponse<LimitDataResponse>>
+   * 获取上交所数据
    */
-  async getLimitData(type: string, date: string): Promise<ApiResponse<LimitDataResponse>> {
-    try {
-      // 首先尝试从多源加载数据
-      const data = await FileUtils.loadFromMultipleSources(type, date)
-      return {
-        success: true,
-        data,
-        message: '数据加载成功',
-        status: 200
-      }
-    } catch (error) {
-      // 如果多源加载失败，回退到API服务
-      try {
-        const url = `/data/${type}/${date}.json`
-        return await apiService.get<LimitDataResponse>(url)
-      } catch (apiError) {
-        return {
-          success: false,
-          data: null as any,
-          message: `无法加载${type}数据: ${date}`,
-          status: 404
-        }
-      }
-    }
+  async getSSEData(date?: string): Promise<ExchangeDataResponse> {
+    const response = await this.getDataByType(DataType.SSE, date)
+    return response.data as ExchangeDataResponse
+  }
+
+  /**
+   * 获取深交所数据
+   */
+  async getSZSEData(date?: string): Promise<ExchangeDataResponse> {
+    const response = await this.getDataByType(DataType.SZSE, date)
+    return response.data as ExchangeDataResponse
+  }
+
+  /**
+   * 获取涨停数据
+   */
+  async getLimitUpData(date?: string): Promise<LimitDataResponse> {
+    const response = await this.getDataByType(DataType.LIMIT_UP, date)
+    return response.data as LimitDataResponse
+  }
+
+  /**
+   * 获取跌停数据
+   */
+  async getLimitDownData(date?: string): Promise<LimitDataResponse> {
+    const response = await this.getDataByType(DataType.LIMIT_DOWN, date)
+    return response.data as LimitDataResponse
   }
 
   /**
    * 获取指数数据
-   * @param date 日期 (YYYY-MM-DD)
-   * @returns Promise<ApiResponse<IndexDataResponse>>
    */
-  async getIndexData(date: string): Promise<ApiResponse<IndexDataResponse>> {
+  async getIndexData(date?: string): Promise<IndexDataResponse> {
+    const response = await this.getDataByType(DataType.INDICES, date)
+    return response.data as IndexDataResponse
+  }
+
+  /**
+   * 批量获取数据
+   */
+  async getBatchData(requests: Array<{ type: DataType, date?: string }>): Promise<ApiResponse<any>[]> {
     try {
-      // 首先尝试从多源加载数据
-      const data = await FileUtils.loadFromMultipleSources('indices', date)
-      return {
+      const results = await stockDataModule.batchGetData(
+        requests.map(req => ({
+          type: req.type as any,
+          options: { date: req.date }
+        }))
+      )
+
+      return results.map((data: any) => ({
         success: true,
         data,
-        message: '数据加载成功',
-        status: 200
-      }
-    } catch (error) {
-      // 如果多源加载失败，回退到API服务
-      try {
-        const url = `/data/indices/${date}.json`
-        return await apiService.get<IndexDataResponse>(url)
-      } catch (apiError) {
-        return {
-          success: false,
-          data: null as any,
-          message: `无法加载指数数据: ${date}`,
-          status: 404
-        }
-      }
+        timestamp: Date.now()
+      }))
+    } catch (error: any) {
+      return requests.map(() => ({
+        success: false,
+        data: null,
+        message: error.message || '批量获取失败',
+        timestamp: Date.now()
+      }))
     }
   }
 
   /**
-   * 根据数据类型获取数据
-   * @param type 数据类型
-   * @param date 日期
-   * @returns Promise<ApiResponse<any>>
+   * 获取服务状态
    */
-  async getDataByType(type: DataType, date: string): Promise<ApiResponse<any>> {
-    switch (type) {
-      case DataType.SSE:
-        return this.getExchangeData('sse', date)
-      case DataType.SZSE:
-        return this.getExchangeData('szse', date)
-      case DataType.LIMIT_UP:
-        return this.getLimitData('limitup', date)
-      case DataType.LIMIT_DOWN:
-        return this.getLimitData('limitdown', date)
-      case DataType.INDICES:
-        return this.getIndexData(date)
-      default:
-        return {
-          success: false,
-          data: null,
-          message: '不支持的数据类型',
-          status: 400
-        }
-    }
+  getStatus() {
+    return stockDataModule.getStatus()
   }
 
   /**
-   * 获取可用的日期列表
-   * @returns Promise<string[]>
+   * 清除缓存
    */
-  async getAvailableDates(): Promise<string[]> {
-    // 这里可以实现获取可用日期的逻辑
-    // 暂时返回最近几天的日期
-    const dates: string[] = []
-    const today = new Date()
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - i)
-      dates.push(date.toISOString().split('T')[0])
-    }
-
-    return dates
-  }
-
-  /**
-   * 检查数据文件是否存在
-   * @param type 数据类型
-   * @param date 日期
-   * @returns Promise<boolean>
-   */
-  async checkDataExists(type: DataType, date: string): Promise<boolean> {
-    const response = await this.getDataByType(type, date)
-    return response.success
+  async clearCache(pattern?: string): Promise<void> {
+    await stockDataModule.clearCache(pattern)
   }
 }
 
-// 创建并导出数据服务实例
+// 创建单例实例
 export const dataService = new DataService()
-export default dataService
+
+// 涨跌停股票数据类型（别名）
+export type LimitStockData = StockData
+
+// 导出类型以保持向后兼容
+export type { StockData, IndexData, MarketStats, ApiResponse } from '@/modules/stock-data/types'

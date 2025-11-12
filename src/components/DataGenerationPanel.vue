@@ -309,7 +309,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useDataStore } from '@/stores/dataStore'
 import { DateUtils } from '@/utils/backend/date-utils'
-import { DataType } from '@/config/api/api-endpoints'
+import { DataType } from '@/services/dataService'
 
 const dataStore = useDataStore()
 
